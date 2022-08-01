@@ -6,29 +6,23 @@ import ChatOnline from "../../components/chatOnline/ChatOnline";
 import { useContext, useEffect, useRef, useState } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from "axios";
-// import { io } from "socket.io-client";
+import { io } from "socket.io-client";
 
 export default function Messenger() {
   const [conversations, setConversations] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+  const [socket, setSocket] = useState(null);
   const [arrivalMessage] = useState(null);
   const [onlineUsers] = useState([]);
   // const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
-  // useEffect(() => {
-    // socket.current = io("ws://localhost:8900");
-    // socket.current.on("getMessage", (data) => {
-  //     setArrivalMessage({
-  //       sender: data.senderId,
-  //       text: data.text,
-  //       createdAt: Date.now(),
-  //     });
-  //   });
-  // }, []);
+  useEffect(() => {
+    setSocket(io("ws://localhost:8080"))
+  }, []);
 
   useEffect(() => {
     arrivalMessage &&
@@ -37,8 +31,8 @@ export default function Messenger() {
   }, [arrivalMessage, currentChat]);
 
   // useEffect(() => {
-    // socket.current.emit("addUser", user._id);
-    // socket.current.on("getUsers", (users) => {
+  // socket.current.emit("addUser", user._id);
+  // socket.current.on("getUsers", (users) => {
   //     setOnlineUsers(
   //       user.followings.filter((f) => users.some((u) => u.userId === f))
   //     );
@@ -48,8 +42,8 @@ export default function Messenger() {
   useEffect(() => {
     const getConversations = async () => {
       try {
-        const res = await axios.get("/conversation/");
-        setConversations(res.data);
+        const res = await axios.get("/conversation/" + user._id);
+        setConversations(res.data.conversation);
       } catch (err) {
         console.log(err);
       }
@@ -61,7 +55,7 @@ export default function Messenger() {
     const getMessages = async () => {
       try {
         const res = await axios.get("/message/" + currentChat?._id);
-        setMessages(res.data);
+        setMessages(res.data.message);
       } catch (err) {
         console.log(err);
       }
@@ -109,7 +103,7 @@ export default function Messenger() {
             <input placeholder="Search for friends" className="chatMenuInput" />
             {conversations.map((c) => (
               <div onClick={() => setCurrentChat(c)}>
-                <Conversation conversation={c} currentUser={user} />
+                <Conversation conversation={c} currentUser={user} key={c._id}/>
               </div>
             ))}
           </div>
@@ -121,7 +115,7 @@ export default function Messenger() {
                 <div className="chatBoxTop">
                   {messages.map((m) => (
                     <div ref={scrollRef}>
-                      <Message message={m} own={m.sender === user._id} />
+                      <Message message={m} own={m.senderId === user._id} />
                     </div>
                   ))}
                 </div>

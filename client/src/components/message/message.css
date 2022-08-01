@@ -8,6 +8,10 @@
     display: flex;
 }
 
+.ownMessage{
+    flex-direction: row-reverse;
+}
+
 .messageImg {
   width: 32px;
   height: 32px;
@@ -26,7 +30,7 @@
 
 .messageBottom{
     font-size: 12px;
-    margin-top: 10px;
+    margin: 10px 60px 0 60px
 }
 
 .message.own{

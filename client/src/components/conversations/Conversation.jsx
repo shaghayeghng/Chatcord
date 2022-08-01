@@ -11,8 +11,8 @@ export default function Conversation({ conversation, currentUser }) {
 
     const getUser = async () => {
       try {
-        const res = await axios(`/user/other-profile/${friendId}`);
-        setUser(res.data);
+        const res = await axios("/user/profile?userId=" + friendId);
+        setUser(res.data.user);
       } catch (err) {
         console.log(err);
       }

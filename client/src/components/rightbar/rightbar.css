@@ -103,7 +103,6 @@
   outline: none;
 }
 
-/*! not working */
-.logout:visited, .logout:link, .logout:active, .logout:hover{
+.logout {
   text-decoration: none;
 }

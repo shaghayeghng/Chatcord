@@ -5,7 +5,7 @@ import { useContext, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
-import { Add, Remove } from "@material-ui/icons";
+import { Add, Remove, ExitToApp } from "@material-ui/icons";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
@@ -79,10 +79,11 @@ export default function Rightbar({ user }) {
           </button>
         )}
         {user.username === currentUser.username && (
-          <Link to={"/login"} >
-          <button className="rightbarFollowButton logout" onClick={handleClickMy}>
-            Log out
-          </button>
+          <Link to={"/login"} className="logout">
+            <button className="rightbarFollowButton" onClick={handleClickMy}>
+              Log out
+              <ExitToApp />
+            </button>
           </Link>
         )}
         <h4 className="rightbarTitle">User information</h4>

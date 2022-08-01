@@ -4,10 +4,9 @@ const conversationConroller = require("../controllers/conversationController");
 
 const router = express.Router();
 
-router
-  .route("/")
-  .get(conversationConroller.getConversations)
-  .post(conversationConroller.createConversation);
+router.route("/").post(conversationConroller.createConversation);
+
+router.route("/:userId").get(conversationConroller.getConversations);
 
 router
   .route("/:senderId/:recieverId")
