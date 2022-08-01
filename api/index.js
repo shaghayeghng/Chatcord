@@ -4,16 +4,15 @@ const dotenv = require("dotenv");
 const morgan = require("morgan");;
 const path = require("path");
 
-// const userRoute = require("./routes/users");
-// const authRoute = require("./routes/auth");
-// const postRoute = require("./routes/posts");
-// const conversationRoute = require("./routes/conversations");
-// const messageRoute = require("./routes/messages");
+const userRouter = require("./routes/userRouter");
+const authRouter = require("./routes/authRouter");
+const conversationRouter = require("./routes/conversationRouter");
+const messageRouter = require("./routes/messageRouter");
 
 const app = express();
 
 require("dotenv").config({
-  path: path.join(__dirname, "config.env"),
+  path: path.join(__dirname, ".env"),
 });
 
 const { PORT, DOMAIN, MONGODB } = process.env;
@@ -30,14 +29,16 @@ mongoose.connect(
 app.use(express.json());
 app.use(morgan("dev"));
 
-// app.use("/api/auth", authRoute);
-// app.use("/api/users", userRoute);
-// app.use("/api/posts", postRoute);
-// app.use("/api/conversations", conversationRoute);
-// app.use("/api/messages", messageRoute);
+app.use("/images", express.static(path.join(__dirname, "public/images")));
+
+app.use("/api/auth", authRouter);
+app.use("/api/user", userRouter);
+app.use("/api/conversation", conversationRouter);
+app.use("/api/message", messageRouter);
 
 //todo error controller
 
 const server = app.listen(PORT || 8000, () => {
   console.log(`Server is up at http://${DOMAIN}:${PORT}`);
 });
+

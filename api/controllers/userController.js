@@ -10,7 +10,7 @@ exports.getProfile = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.otherProfile = catchAsync(async (req, res, next) => {
+exports.getOtherProfile = catchAsync(async (req, res, next) => {
   const { username } = req.params;
 
   const user = await UserModel.findOne({

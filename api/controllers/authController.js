@@ -1,5 +1,5 @@
 const userModel = require("../models/userModel");
-const bcrypt = require("bcrypt");
+const bcrypt = require("bcryptjs");
 
 const catchAsync = require("./../util/catchAsync");
 const AppError = require("./../util/appError");
@@ -11,7 +11,7 @@ exports.signUp = catchAsync(async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(req.body.password, salt);
 
   //create new user
-  const newUser = new User({
+  const newUser = new userModel({
     username: req.body.username,
     email: req.body.email,
     password: hashedPassword,
@@ -27,21 +27,21 @@ exports.signUp = catchAsync(async (req, res, next) => {
 
 // Login
 exports.login = catchAsync(async (req, res, next) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   //Check if email and password exist
-  if (!username || !password) {
-    return next(new AppError("Please enter your username and password", 400));
+  if (!email || !password) {
+    return next(new AppError("Please enter your email and password", 400));
   }
 
   //Check if the user exists && if the password is correct
-  const user = await userModel.find({ username: username }).select("+password");
+  const user = await userModel.find({ email: email }).select("+password");
 
   if (
     user.length !== 1 ||
     !(await bcrypt.compare(password, user[0].password))
   ) {
-    return next(new AppError("Wrong username or password!", 401));
+    return next(new AppError("Wrong email or password!", 401));
   }
 
   //!

@@ -30,7 +30,7 @@ exports.createConversation = catchAsync(async (req, res, next) => {
 });
 
 // get conversations of a user
-exports.getConversation = catchAsync(async (req, res, next) => {
+exports.getConversations = catchAsync(async (req, res, next) => {
   const conversation = await conversationModel.find({
     members: { $in: [req.user._id] },
   });
