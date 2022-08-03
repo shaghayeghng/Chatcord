@@ -10,7 +10,9 @@ import { Add, Remove, ExitToApp } from "@material-ui/icons";
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
   const [friends] = useState([]);
+  // const [User, setUser] = useState(user);
   const { user: currentUser, dispatch } = useContext(AuthContext);
+  // console.log(User)
   const [followed, setFollowed] = useState(
     currentUser.followings.includes(user?.id)
   );
@@ -47,6 +49,7 @@ export default function Rightbar({ user }) {
   const handleClickMy = () => {
     //! not deleting the user from localStorage Immediately
     localStorage.removeItem("user");
+    // setUser(null);
   };
 
   const HomeRightbar = () => {
