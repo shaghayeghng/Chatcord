@@ -47,8 +47,8 @@ export default function Rightbar({ user }) {
   };
 
   const handleClickMy = () => {
-    //! not deleting the user from localStorage Immediately
-    localStorage.removeItem("user");
+    // //! not deleting the user from localStorage Immediately
+    // localStorage.removeItem("user");
     // setUser(null);
   };
 
