@@ -13,31 +13,37 @@ export default function Messenger() {
   const [currentChat, setCurrentChat] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
-  const [socket, setSocket] = useState(null);
-  const [arrivalMessage] = useState(null);
+  const [arrivalMessage, setArrivalMessage] = useState(null);
   const [onlineUsers] = useState([]);
-  // const socket = useRef();
+  const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
 
   useEffect(() => {
-    setSocket(io("ws://localhost:8080"))
+    // connect to socket
+    socket.current = io("ws://localhost:8080");
+
+    // get messages at initial render
+    socket.current.on("getMessage", (data) => {
+      setArrivalMessage({
+        senderId: data.senderId,
+        text: data.text,
+        createdAt: Date.now(),
+      });
+    });
   }, []);
 
   useEffect(() => {
-    arrivalMessage &&
-      currentChat?.members.includes(arrivalMessage.sender) &&
-      setMessages((prev) => [...prev, arrivalMessage]);
+    if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender))
+      setMessages((prev) => [...prev, arrivalMessage]); //* prep for fewer dependencies of useEffect
   }, [arrivalMessage, currentChat]);
 
-  // useEffect(() => {
-  // socket.current.emit("addUser", user._id);
-  // socket.current.on("getUsers", (users) => {
-  //     setOnlineUsers(
-  //       user.followings.filter((f) => users.some((u) => u.userId === f))
-  //     );
-  //   });
-  // }, [user]);
+  useEffect(() => {
+    socket.current.emit("addUser", user._id);
+    socket.current.on("getUsers", (users) => {
+      console.log(users);
+    });
+  }, [user]);
 
   useEffect(() => {
     const getConversations = async () => {
@@ -66,24 +72,27 @@ export default function Messenger() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const message = {
-      sender: user._id,
+      senderId: user._id,
       text: newMessage,
       conversationId: currentChat._id,
     };
 
-    // const receiverId = currentChat.members.find(
-    //   (member) => member !== user._id
-    // );
-
-    // socket.current.emit("sendMessage", {
-    //   senderId: user._id,
-    //   receiverId,
-    //   text: newMessage,
-    // });
+    const receiverId = currentChat.members.find(
+      (member) => member !== user._id
+    );
+      
+    socket.current.emit("sendMessage", {
+      senderId: user._id,
+      receiverId,
+      text: newMessage,
+    });
 
     try {
       const res = await axios.post("/message", message);
-      setMessages([...messages, res.data]);
+      console.log(res.data.newMessage)
+
+      setMessages([...messages, res.data.newMessage]);
+      console.log(messages)
       setNewMessage("");
     } catch (err) {
       console.log(err);
@@ -103,7 +112,7 @@ export default function Messenger() {
             <input placeholder="Search for friends" className="chatMenuInput" />
             {conversations.map((c) => (
               <div onClick={() => setCurrentChat(c)}>
-                <Conversation conversation={c} currentUser={user} key={c._id}/>
+                <Conversation conversation={c} currentUser={user} key={c._id} />
               </div>
             ))}
           </div>
