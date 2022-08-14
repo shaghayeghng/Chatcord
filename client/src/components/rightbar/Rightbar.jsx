@@ -12,7 +12,7 @@ export default function Rightbar({ user }) {
   const [friends] = useState([]);
   // const [User, setUser] = useState(user);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  // console.log(User)
+  
   const [followed, setFollowed] = useState(
     currentUser.followings.includes(user?.id)
   );

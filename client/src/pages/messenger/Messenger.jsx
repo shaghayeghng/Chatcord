@@ -34,7 +34,7 @@ export default function Messenger() {
   }, []);
 
   useEffect(() => {
-    if (arrivalMessage && currentChat?.members.includes(arrivalMessage.sender))
+    if (arrivalMessage && currentChat?.members.includes(arrivalMessage.senderId))
       setMessages((prev) => [...prev, arrivalMessage]); //* prep for fewer dependencies of useEffect
   }, [arrivalMessage, currentChat]);
 
@@ -77,22 +77,19 @@ export default function Messenger() {
       conversationId: currentChat._id,
     };
 
-    const receiverId = currentChat.members.find(
+    const recieverId = currentChat.members.find(
       (member) => member !== user._id
     );
-      
+
     socket.current.emit("sendMessage", {
       senderId: user._id,
-      receiverId,
+      recieverId: recieverId,
       text: newMessage,
     });
 
     try {
       const res = await axios.post("/message", message);
-      console.log(res.data.newMessage)
-
       setMessages([...messages, res.data.newMessage]);
-      console.log(messages)
       setNewMessage("");
     } catch (err) {
       console.log(err);
