@@ -1,24 +1,11 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
 import "./conversation.css";
 
 export default function Conversation({ conversation, currentUser }) {
-  const [user, setUser] = useState(null);
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-
-  useEffect(() => {
-    const friendId = conversation.members.find((m) => m !== currentUser._id);
-
-    const getUser = async () => {
-      try {
-        const res = await axios("/user/profile?userId=" + friendId);
-        setUser(res.data.user);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getUser();
-  }, [currentUser, conversation]);
+  const user =
+    conversation.members[0] === currentUser._id
+      ? conversation.members[1]
+      : conversation.members[0];
 
   return (
     <div className="conversation">

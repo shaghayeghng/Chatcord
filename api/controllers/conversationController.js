@@ -34,7 +34,7 @@ exports.getConversations = catchAsync(async (req, res, next) => {
   const { userId } = req.params;
   const conversation = await conversationModel.find({
     members: { $in: [userId] },
-  });
+  }).populate("members");
 
   if (!conversation) {
     return next(new AppError("No conversation found!", 404));
