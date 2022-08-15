@@ -1,7 +1,5 @@
 import "./rightbar.css";
-import { Users } from "../../dummyData";
-import Online from "../online/Online";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext";
@@ -9,36 +7,36 @@ import { Add, Remove, ExitToApp } from "@material-ui/icons";
 
 export default function Rightbar({ user }) {
   const PF = process.env.REACT_APP_PUBLIC_FOLDER;
-  const [friends] = useState([]);
-  // const [User, setUser] = useState(user);
+  const [friends, setFriends] = useState([]);
   const { user: currentUser, dispatch } = useContext(AuthContext);
-  
-  const [followed, setFollowed] = useState(
-    currentUser.followings.includes(user?.id)
-  );
+  const [followed, setFollowed] = useState(currentUser.followings.includes(user._id));
 
-  // useEffect(() => {
-  //   const getFriends = async () => {
-  //     try {
-  //       const friendList = await axios.get("/users/friends/" + user._id);
-  //       setFriends(friendList.data);
-  //     } catch (err) {
-  //       console.log(err);
-  //     }
-  //   };
-  //   getFriends();
-  // }, [user]);
+  console.log(currentUser.followings.includes(user?._id))
+  console.log(followed)
+  useEffect(() => {
+    const getFriends = async () => {
+      try {
+        const friendList = await axios.get("/user/friends/" + user._id);
+        setFriends(friendList.data.friendList);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getFriends();
+  }, [user]);
 
   const handleClickOther = async () => {
     try {
       if (followed) {
-        await axios.put(`/users/${user._id}/unfollow`, {
-          userId: currentUser._id,
+        await axios.put("/user/unfollow-friend", {
+          userId: user._id,
+          currentUserId: currentUser._id,
         });
         dispatch({ type: "UNFOLLOW", payload: user._id });
       } else {
-        await axios.put(`/users/${user._id}/follow`, {
-          userId: currentUser._id,
+        await axios.put("/user/follow-friend", {
+          userId: user._id,
+          currentUserId: currentUser._id,
         });
         dispatch({ type: "FOLLOW", payload: user._id });
       }
@@ -47,29 +45,10 @@ export default function Rightbar({ user }) {
   };
 
   const handleClickMy = () => {
-    // //! not deleting the user from localStorage Immediately
-    // localStorage.removeItem("user");
+    // //! not deleting the user from sessionStorage Immediately
+    // sessionStorage.removeItem("user");
     // setUser(null);
-  };
-
-  const HomeRightbar = () => {
-    return (
-      <>
-        <div className="birthdayContainer">
-          <img className="birthdayImg" src="assets/gift.png" alt="" />
-          <span className="birthdayText">
-            <b>Pola Foster</b> and <b>3 other friends</b> have a birhday today.
-          </span>
-        </div>
-        <img className="rightbarAd" src="assets/ad.png" alt="" />
-        <h4 className="rightbarTitle">Online Friends</h4>
-        <ul className="rightbarFriendList">
-          {Users.map((u) => (
-            <Online key={u.id} user={u} />
-          ))}
-        </ul>
-      </>
-    );
+    // window.location.reload();
   };
 
   const ProfileRightbar = () => {
@@ -84,7 +63,7 @@ export default function Rightbar({ user }) {
         {user.username === currentUser.username && (
           <Link to={"/login"} className="logout">
             <button className="rightbarFollowButton" onClick={handleClickMy}>
-              Log out
+              Log out 
               <ExitToApp />
             </button>
           </Link>
@@ -138,7 +117,7 @@ export default function Rightbar({ user }) {
   return (
     <div className="rightbar">
       <div className="rightbarWrapper">
-        {user ? <ProfileRightbar /> : <HomeRightbar />}
+        <ProfileRightbar />
       </div>
     </div>
   );

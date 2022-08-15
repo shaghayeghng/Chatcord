@@ -34,11 +34,13 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
     followers: {
-      type: Array,
+      type: [mongoose.Types.ObjectId],
+      ref: "user",
       default: [],
     },
     followings: {
-      type: Array,
+      type: [mongoose.Types.ObjectId],
+      ref: "user",
       default: [],
     },
     role: {

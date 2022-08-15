@@ -14,7 +14,7 @@ export default function Messenger() {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [arrivalMessage, setArrivalMessage] = useState(null);
-  const [onlineUsers] = useState([]);
+  const [onlineUsers, setOnlineUsers] = useState([]);
   const socket = useRef();
   const { user } = useContext(AuthContext);
   const scrollRef = useRef();
@@ -34,14 +34,19 @@ export default function Messenger() {
   }, []);
 
   useEffect(() => {
-    if (arrivalMessage && currentChat?.members.includes(arrivalMessage.senderId))
+    if (
+      arrivalMessage &&
+      currentChat?.members.includes(arrivalMessage.senderId)
+    )
       setMessages((prev) => [...prev, arrivalMessage]); //* prep for fewer dependencies of useEffect
   }, [arrivalMessage, currentChat]);
 
   useEffect(() => {
     socket.current.emit("addUser", user._id);
     socket.current.on("getUsers", (users) => {
-      console.log(users);
+      setOnlineUsers(
+        user.followings.filter((f) => users.some((u) => u.userId === f))
+      );
     });
   }, [user]);
 
