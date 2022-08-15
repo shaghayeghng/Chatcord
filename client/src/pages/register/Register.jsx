@@ -1,6 +1,6 @@
+import "./register.css";
 import axios from "axios";
 import { useRef } from "react";
-import "./register.css";
 import { useNavigate, Link } from "react-router-dom";
 
 export default function Register() {

@@ -18,12 +18,9 @@ export default function Sidebar() {
         setMightKnowfriends(
           conversation.map((c) => {
             const friend =
-            c.members[0]._id === user._id
-              ? c.members[1]
-              : c.members[0];
-            if (!user.followings.includes(friend._id))
-              return friend;
-            //todo fix this
+              c.members[0]._id === user._id ? c.members[1] : c.members[0];
+            if (!user.followings.includes(friend._id)) return friend;
+            //todo fix this with populate
             return user.followers;
           })
         );

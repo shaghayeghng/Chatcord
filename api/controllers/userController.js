@@ -4,6 +4,7 @@ const { UserRoles } = require("../models/userModel");
 const catchAsync = require("./../util/catchAsync");
 const AppError = require("./../util/appError");
 
+//todo add req.user
 // exports.getProfile = catchAsync(async (req, res, next) => {
 //   res.status(200).json({
 //     user: req.user,
